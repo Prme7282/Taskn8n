@@ -4,69 +4,177 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Text Analysis (Gemini)</title>
+
   <style>
+    :root {
+      --accent: #66fcf1;
+      --dark-bg: #0b0c10;
+      --card-bg: rgba(31, 40, 51, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.25);
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #0b0c10;
-      color: #c5c6c7;
+      background-color: var(--dark-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25'%3E%3Cdefs%3E%3ClinearGradient id='a' gradientUnits='userSpaceOnUse' x1='0' x2='0' y1='0' y2='100%25' gradientTransform='rotate(240)'%3E%3Cstop offset='0' stop-color='%230b0c10'/%3E%3Cstop offset='1' stop-color='%230072ff'/%3E%3C/linearGradient%3E%3Cpattern patternUnits='userSpaceOnUse' id='b' width='540' height='450' viewBox='0 0 1080 900'%3E%3Cg fill-opacity='0.08'%3E%3Cpolygon fill='%23FFF' points='90 150 0 300 180 300'/%3E%3Cpolygon fill='%23FFF' points='90 150 180 0 0 0'/%3E%3Cpolygon fill='%23FFF' points='270 150 360 0 180 0'/%3E%3Cpolygon fill='%23FFF' points='450 150 360 300 540 300'/%3E%3Cpolygon fill='%23FFF' points='450 150 540 0 360 0'/%3E%3Cpolygon fill='%23FFF' points='630 150 540 300 720 300'/%3E%3Cpolygon fill='%23FFF' points='630 150 720 0 540 0'/%3E%3Cpolygon fill='%23FFF' points='810 150 720 300 900 300'/%3E%3Cpolygon fill='%23FFF' points='810 150 900 0 720 0'/%3E%3Cpolygon fill='%23FFF' points='990 150 900 300 1080 300'/%3E%3Cpolygon fill='%23FFF' points='990 150 1080 0 900 0'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23a)' width='100%25' height='100%25'/%3E%3Crect fill='url(%23b)' width='100%25' height='100%25'/%3E%3C/svg%3E");
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
+      padding: 24px;
+      color: #c5c6c7;
+      background-attachment: fixed;
+      background-size: cover;
     }
-    h1 { color: #66fcf1; }
+
+    .container {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      padding: 32px;
+      width: 90%;
+      max-width: 500px;
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--accent);
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
     textarea {
-      width: 400px;
+      width: 100%;
       height: 120px;
       border-radius: 10px;
       border: none;
-      padding: 10px;
+      padding: 12px 16px;
       font-size: 16px;
       outline: none;
       resize: none;
-      background-color: #1f2833;
+      background-color: rgba(255,255,255,0.1);
       color: white;
+      box-sizing: border-box;
+      transition: all 0.2s ease-in-out;
     }
-    select, button {
-      margin-top: 10px;
-      padding: 10px 20px;
+
+    textarea:focus {
+      box-shadow: 0 0 8px var(--accent);
+      background-color: rgba(255,255,255,0.15);
+    }
+
+    .radio-group {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 16px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 15px;
+      user-select: none;
+    }
+
+    input[type="radio"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      position: relative;
+      transition: 0.3s;
+      background-color: transparent;
+    }
+
+    input[type="radio"]:checked {
+      background-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    input[type="radio"]:hover {
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background-color: #45a29e;
       color: white;
       font-size: 16px;
       cursor: pointer;
+      transition: 0.3s ease;
+      font-weight: 600;
     }
-    select { background-color: #1f2833; color: white; }
-    button:hover { background-color: #66fcf1; color: #0b0c10; }
-    .loading { display: none; margin-top: 15px; color: #f1c40f; }
-    .result {
+
+    button:hover {
+      background-color: var(--accent);
+      color: #0b0c10;
+      transform: translateY(-1px);
+    }
+
+    .loading {
+      display: none;
+      margin-top: 15px;
+      color: #f1c40f;
+    }
+.result {
       margin-top: 20px;
       padding: 15px;
-      width: 400px;
-      background-color: #1f2833;
+      width: 100%;
+      background-color: rgba(255,255,255,0.08);
       border-radius: 10px;
       white-space: pre-wrap;
       text-align: left;
+      color: #fff;
+      box-sizing: border-box;
     }
   </style>
 </head>
+
 <body>
-  <h1>🧠 Text Analysis (Gemini)</h1>
+  <div class="container">
+    <h1>🧠 Text Analysis (Gemini)</h1>
 
-  <form id="analyzeForm">
-    <textarea id="text" placeholder="Enter text..." required></textarea><br />
-    <select id="mode">
-      <option value="summary">Summary</option>
-      <option value="sentiment analysis">Sentiment Analysis</option>
-    </select><br />
-    <button type="submit">Run</button>
-  </form>
+    <form id="analyzeForm">
+      <textarea id="text" placeholder="Enter text..." required></textarea><br />
 
-  <div class="loading" id="loading">⏳ Processing your request...</div>
-  <div class="result" id="result"></div>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" name="mode" value="summary" checked />
+          Summary
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="mode" value="sentiment analysis" />
+          Sentiment Analysis
+        </label>
+      </div>
+
+      <button type="submit">Run</button>
+    </form>
+
+    <div class="loading" id="loading">⏳ Processing your request...</div>
+    <div class="result" id="result"></div>
+  </div>
 
   <script>
     const form = document.getElementById("analyzeForm");
@@ -79,8 +187,8 @@
       loading.style.display = "block";
 
       const text = document.getElementById("text").value;
-      const mode = document.getElementById("mode").value;
-
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+        console.log("Selected mode:", mode);
       try {
         const res = await fetch("/analyze", {
           method: "POST",
