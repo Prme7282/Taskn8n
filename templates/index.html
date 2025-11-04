@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text Analysis (Gemini)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0b0c10;
+      color: #c5c6c7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 { color: #66fcf1; }
+    textarea {
+      width: 400px;
+      height: 120px;
+      border-radius: 10px;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      outline: none;
+      resize: none;
+      background-color: #1f2833;
+      color: white;
+    }
+    select, button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #45a29e;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    select { background-color: #1f2833; color: white; }
+    button:hover { background-color: #66fcf1; color: #0b0c10; }
+    .loading { display: none; margin-top: 15px; color: #f1c40f; }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      width: 400px;
+      background-color: #1f2833;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Text Analysis (Gemini)</h1>
+
+  <form id="analyzeForm">
+    <textarea id="text" placeholder="Enter text..." required></textarea><br />
+    <select id="mode">
+      <option value="summary">Summary</option>
+      <option value="sentiment analysis">Sentiment Analysis</option>
+    </select><br />
+    <button type="submit">Run</button>
+  </form>
+
+  <div class="loading" id="loading">⏳ Processing your request...</div>
+  <div class="result" id="result"></div>
+
+  <script>
+    const form = document.getElementById("analyzeForm");
+    const loading = document.getElementById("loading");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      result.textContent = "";
+      loading.style.display = "block";
+
+      const text = document.getElementById("text").value;
+      const mode = document.getElementById("mode").value;
+
+      try {
+        const res = await fetch("/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, mode })
+        });
+
+        const data = await res.json();
+        loading.style.display = "none";
+
+        if (data.final_result) {
+          result.textContent = data.final_result.trim();
+        } else if (data.result) {
+          result.textContent = data.result.trim();
+        } else {
+          result.textContent = "❌ No result returned from workflow.";
+        }
+      } catch (err) {
+        loading.style.display = "none";
+        result.textContent = "⚠️ Error communicating with server.";
+        console.error("Error:", err);
+      }
+    });
+  </script>
+</body>
+</html>
