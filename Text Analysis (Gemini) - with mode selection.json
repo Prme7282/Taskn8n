@@ -1,0 +1,121 @@
+{
+  "name": "Text Analysis (Gemini) - with mode selection",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "text-analysis",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "27b6d5b0-4eea-411f-9bc6-f926e7c8e813",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        224,
+        256
+      ],
+      "webhookId": "0d757ddb-719b-4438-b869-07049765287c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBmNdSXFCj4nd-UFa9UL3-xEr7HwcM0qQE",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"text\": \"Perform a {{ $json.body.mode }} of the following text:\\n {{ $json.body.text_to_analyze }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "3c9a8afd-d04f-41f0-b27a-6d32b1848335",
+      "name": "HTTP Request (Gemini)1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        496,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "final_result",
+              "value": "={{ $json[\"candidates\"]?.[0]?.content?.parts?.[0]?.text || $json[\"outputText\"] || '' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9fa419b9-9250-44b0-b42f-4ec8aa32bb12",
+      "name": "Set Final Result1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        800,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e460ada8-646c-4398-bffd-9e4e82ed0650",
+      "name": "Respond to Webhook1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        256
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request (Gemini)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (Gemini)1": {
+      "main": [
+        [
+          {
+            "node": "Set Final Result1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Final Result1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3b877e0f-a329-468a-b9c5-ec416841d46c",
+  "meta": {
+    "instanceId": "0b0f2daa09c6cbc916c376ab62c7fa8aa56570f359f90fc23e1febb862777551"
+  },
+  "id": "yXtXQWKoU5UwmOFX",
+  "tags": []
+}
