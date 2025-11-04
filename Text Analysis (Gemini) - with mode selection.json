@@ -5,35 +5,42 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "text-analysis",
+        "authentication": "headerAuth",
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "27b6d5b0-4eea-411f-9bc6-f926e7c8e813",
+      "id": "a5e7a9e7-67e1-4825-9cd5-1657638413dd",
       "name": "Webhook1",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        224,
-        256
+        -112,
+        0
       ],
-      "webhookId": "0d757ddb-719b-4438-b869-07049765287c"
+      "webhookId": "0d757ddb-719b-4438-b869-07049765287c",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "6iXI1P5staQXmpL5",
+          "name": "Header Auth account 2"
+        }
+      }
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBmNdSXFCj4nd-UFa9UL3-xEr7HwcM0qQE",
+        "url": "={{$json[\"gemini_url\"]}}\n",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    {\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"text\": \"Perform a {{ $json.body.mode }} of the following text:\\n {{ $json.body.text_to_analyze }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"text\": \"Perform a {{ $('Webhook1').item.json.body.mode }} of the following text:\\n {{ $('Webhook1').item.json.body.text_to_analyze }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
-      "id": "3c9a8afd-d04f-41f0-b27a-6d32b1848335",
+      "id": "5f52ef53-603e-4040-9817-cd1d69fe36b0",
       "name": "HTTP Request (Gemini)1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
-        496,
-        256
+        272,
+        0
       ]
     },
     {
@@ -49,27 +56,40 @@
         },
         "options": {}
       },
-      "id": "9fa419b9-9250-44b0-b42f-4ec8aa32bb12",
+      "id": "5702d17e-82c0-4354-b9c7-607e31a7419b",
       "name": "Set Final Result1",
       "type": "n8n-nodes-base.set",
       "typeVersion": 2,
       "position": [
-        800,
-        256
+        464,
+        0
       ]
     },
     {
       "parameters": {
         "options": {}
       },
-      "id": "e460ada8-646c-4398-bffd-9e4e82ed0650",
+      "id": "4bb6aa18-023e-4e72-a3dd-cc88f33790cb",
       "name": "Respond to Webhook1",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        1104,
-        256
+        640,
+        0
       ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  gemini_url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${$env.GEMINI_API_KEY}`\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        0
+      ],
+      "id": "40495c35-35fd-47d1-af8c-97f0407d8e3e",
+      "name": "Code in JavaScript1"
     }
   ],
   "pinData": {},
@@ -78,7 +98,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request (Gemini)1",
+            "node": "Code in JavaScript1",
             "type": "main",
             "index": 0
           }
@@ -106,16 +126,28 @@
           }
         ]
       ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request (Gemini)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "3b877e0f-a329-468a-b9c5-ec416841d46c",
+  "versionId": "45b16630-47b8-4014-a30b-5a2aaf3150b5",
   "meta": {
-    "instanceId": "0b0f2daa09c6cbc916c376ab62c7fa8aa56570f359f90fc23e1febb862777551"
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2f44905bbf5a3db52206bd83720327cc91678e8679c7b5751cc456c2fce3ce1b"
   },
-  "id": "yXtXQWKoU5UwmOFX",
+  "id": "cgPkHoosudEhjOEE",
   "tags": []
 }
