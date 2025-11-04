@@ -44,6 +44,13 @@ GEMINI_API_KEY=your-google-gemini-api-key
 
 ## 🧠 n8n Workflow Setup
 
+Below is the overview of the workflow structure:
+
+![n8n Workflow](https://i.ibb.co/MkTJVHBd/1762226479.png)
+
+> *If the image doesn't load, click here to view it directly:*  
+> ShareX Image link : https://i.ibb.co/MkTJVHBd/1762226479.png
+
 ### 1. Create a Webhook Node
 
 * **Node Type:** Webhook
